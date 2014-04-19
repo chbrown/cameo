@@ -1,0 +1,35 @@
+{
+  "name": "cameo",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/chbrown/cameo",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chbrown/cameo.git"
+  },
+  "bugs": {
+    "email": "Christopher Brown <io@henrian.com>",
+    "url": "http://github.com/chbrown/cameo/issues"
+  },
+  "license": "MIT",
+  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
+  "dependencies": {
+    "async": "*",
+    "loge": "*",
+    "optimist": "*",
+    "pg": "*",
+    "redis": "*",
+    "sqlcmd": "*",
+    "streaming": "*",
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "tap": "*"
+  },
+  "bin": {
+    "cameo": "bin/cameo.js"
+  },
+  "scripts": {
+  }
+}
