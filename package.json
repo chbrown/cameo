@@ -1,6 +1,6 @@
 {
   "name": "cameo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "keywords": [],
   "homepage": "https://github.com/chbrown/cameo",
@@ -30,6 +30,5 @@
   "bin": {
     "cameo": "bin/cameo.js"
   },
-  "scripts": {
-  }
+  "scripts": {}
 }
