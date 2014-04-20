@@ -1,28 +1,16 @@
 # cameo
 
-Intended to be a quick and dirty way to grab a bunch of urls. Not a whole lot, but just a bunch. Like, <1M.
+Quick and dirty way to grab a bunch of urls. Not a lot; less than a million, say.
+
+
+
 
 ## Installation
 
-**From npm:**
-
 ```sh
-npm install cameo
+npm install -g cameo
 ```
 
-**Or github:**
-
-```sh
-git clone https://github.com/chbrown/cameo.git
-cd cameo
-npm install -g
-```
-
-**Import:**
-
-```js
-var cameo = require('cameo');
-```
 
 
 ## License

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /*jslint node: true */
 var logger = require('loge');
-var commands = require('../commands');
+var os = require('os');
+var commands = require('./cameo-commands');
 
 var optimist = require('optimist')
   .usage([
@@ -14,6 +15,7 @@ var optimist = require('optimist')
     '',
   ].join('\n'))
   .describe({
+    forks: 'number of subprocess to fork for parallel tasks',
     help: 'print this help message',
     verbose: 'print extra output',
     version: 'print version',
@@ -21,8 +23,8 @@ var optimist = require('optimist')
   .boolean(['help', 'verbose', 'version'])
   .alias({verbose: 'v'})
   .default({
-    database: 'ruthless',
-    user: process.env.USER,
+    forks: os.cpus().length,
+    // user: process.env.USER,
   });
 
 var argv = optimist.argv;
@@ -35,36 +37,15 @@ else if (argv.version) {
   console.log(require('../package').version);
 }
 else {
+  var commands = require('./cameo-commands');
   argv = optimist.check(function(argv) {
     if (argv._.length < 1) {
       throw new Error('You must specify a command');
     }
+    if (commands[argv._[0]] === undefined) {
+      throw new Error('Unrecognized command: ' + argv._[0]);
+    }
   }).argv;
 
-  var command = argv._[0];
-  if (command == 'install') {
-    logger.debug('running "install"');
-    commands.install(function(err) {
-      if (err) logger.error(err);
-      process.exit(err ? 1 : 0);
-    });
-  }
-  else if (command == 'work') {
-    logger.debug('running "work"');
-    commands.work(function(err) {
-      if (err) logger.error(err);
-      process.exit(err ? 1 : 0);
-    });
-  }
-  else if (command == 'add') {
-    logger.debug('running "add"');
-    commands.add(argv._.slice(1), function(err) {
-      if (err) logger.error(err);
-      process.exit(err ? 1 : 0);
-    });
-  }
-  else {
-    console.error('Unrecognized command: %s', command);
-    process.exit(1);
-  }
+  commands[argv._[0]](argv);
 }

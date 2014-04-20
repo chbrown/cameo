@@ -5,7 +5,8 @@ var redis = require('redis');
 var url = require('url');
 
 var agent = require('./agent');
-var ns = require('./queue').ns;
+var queue = require('./queue');
+var ns = require('./version').ns;
 var db = require('./db');
 var useragents = require('./useragents');
 

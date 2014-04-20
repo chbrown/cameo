@@ -1,1 +1,0 @@
-/*jslint node: true */

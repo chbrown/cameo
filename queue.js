@@ -2,14 +2,48 @@
 var os = require('os');
 var redis = require('redis');
 var logger = require('loge');
+var streaming = require('streaming');
+
 var browser = require('./browser');
+var ns = require('./version').ns;
 
+exports.addFromList = function(urls, callback) {
+  if (urls.length === 0) {
+    logger.debug('ignoring empty input list');
+    return callback();
+  }
 
-var ns = exports.ns = function(/* parts... */) {
-  // quick namespace prefixer for redis keys
-  return Array.prototype.concat.apply(['cameo', 'v01'], arguments).join(':');
+  var client = redis.createClient();
+  client.lpush(ns('urls', 'queue'), urls, function(err) {
+    client.quit();
+    logger.debug('added %d urls from input list', urls.length);
+    callback(err);
+  });
 };
 
+exports.addFromStream = function(stream, callback) {
+  var client = redis.createClient();
+  var n = 0;
+
+  stream.pipe(new streaming.Splitter())
+  .on('error', function(err) {
+    client.quit();
+    callback(err);
+  })
+  .on('data', function(url) {
+    logger.info('adding url from input: "%s"', url);
+    // put new things at the top of the queue
+    client.lpush(ns('urls', 'queue'), url);
+    n++;
+  })
+  .on('end', function() {
+    // wait for all those pushes to go through
+    client.on('end', function() {
+      logger.debug('added %d urls from input stream', n);
+      callback();
+    }).quit();
+  });
+};
 
 var queueLoop = function(callback) {
   logger.info('Beginning queue->tried loop at %s', new Date().toISOString());
@@ -30,28 +64,28 @@ var queueLoop = function(callback) {
   })();
 };
 
-var startCluster = exports.startCluster = function() {
+// var clusterQueueLoop =
+exports.clusterQueueLoop = function(forks) {
   var cluster = require('cluster');
   if (cluster.isMaster) {
-    var ncpus = os.cpus().length;
-    logger.info('Starting cluster with %d forks', ncpus);
+    logger.info('Starting cluster with %d forks', forks);
     // set up listeners
     cluster.on('exit', function(worker, code, signal) {
-      logger.warn('cluster: worker exit', worker.id, worker.process.pid, code, signal);
+      logger.warn('cluster: worker exit %d (pid: %d)', worker.id, worker.process.pid, code, signal);
       cluster.fork();
     });
     cluster.on('fork', function(worker) {
-      logger.info('cluster: worker fork', worker.id, worker.process.pid);
+      logger.info('cluster: worker fork %d (pid: %d)', worker.id, worker.process.pid);
     });
 
     // fork workers
-    for (var i = 0; i < ncpus; i++) {
+    for (var i = 0; i < forks; i++) {
       cluster.fork();
     }
   }
   else {
     queueLoop(function(err) {
-      // normally, the queue loop will never exit.
+      // optimally, the queue loop will never exit.
       logger.error('queueLoop raised error', err);
       process.exit(1);
     });
