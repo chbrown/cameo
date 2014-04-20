@@ -6,8 +6,6 @@ var stream = require('stream');
 var streaming = require('streaming');
 var zlib = require('zlib');
 
-var useragents = require('./useragents');
-
 var streamDecoder = function(encoding) {
   if (encoding == 'gzip') {
     return zlib.createGunzip();
@@ -18,6 +16,14 @@ var streamDecoder = function(encoding) {
   else {
     return stream.PassThrough();
   }
+};
+
+var TimeoutError = exports.TimeoutError = function(timeout) {
+  Error.call(this);
+  Error.captureStackTrace(this, arguments.callee);
+  this.message = 'HTTP response timed out after ' + timeout + 'ms';
+  this.name = 'TimeoutError';
+  this.code = 'TIMEOUT';
 };
 
 // kind of like mikeal's whole request package, but simpler and more transparent
@@ -45,10 +51,14 @@ var request = exports.request = function(options, callback) {
 
   Warning: this supports https, but doesn't do any ssl checking, afaik.
   */
+  var timeout = 5000;
+
   var req = (options.protocol == 'https:' ? https : http).request(options)
   .on('timeout', function() {
-    // console.log('timeout', arguments);
-    callback(new Error('Timeout Error'));
+    callback(new TimeoutError(timeout));
+  })
+  .on('error', function(err) {
+    callback(err);
   })
   .on('response', function(res) {
     // console.log('response', res);
@@ -57,13 +67,13 @@ var request = exports.request = function(options, callback) {
       if (err) return callback(err);
 
       callback(null, {
-        statusCode: res.statusCode, // a Number
+        status_code: res.statusCode, // a Number
         headers: res.headers, // an Object[String -> String]
-        body: chunks.join(''),
+        body: chunks.join(''), // a String
       });
     });
   });
-  req.setTimeout(5000);
+  req.setTimeout(timeout);
   req.end();
   return req;
 };

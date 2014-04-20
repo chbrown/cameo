@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 /*jslint node: true */
 var logger = require('loge');
-var cameo = require('..');
+var commands = require('../commands');
 
 var optimist = require('optimist')
   .usage([
     'Usage: cameo <command> [<args>]',
     '',
     'commands:',
-    '  install   Create the database and execute the schema, if needed',
-    '  work      Start the basic redis worker',
+    '  install                Create the database and execute the schema, if needed',
+    '  work                   Start the redis queue worker in cluster mode',
+    '  add [url] [-] [file]   Add urls from file, argument, or STDIN',
     '',
   ].join('\n'))
   .describe({
@@ -43,14 +44,21 @@ else {
   var command = argv._[0];
   if (command == 'install') {
     logger.info('running "install"');
-    cameo.install(function(err) {
+    commands.install(function(err) {
       if (err) logger.error(err);
       process.exit(err ? 1 : 0);
     });
   }
   else if (command == 'work') {
     logger.info('running "work"');
-    cameo.work(function(err) {
+    commands.work(function(err) {
+      if (err) logger.error(err);
+      process.exit(err ? 1 : 0);
+    });
+  }
+  else if (command == 'add') {
+    logger.info('running "add"');
+    commands.add(argv._.slice(1), function(err) {
       if (err) logger.error(err);
       process.exit(err ? 1 : 0);
     });
