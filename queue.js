@@ -32,15 +32,16 @@ var queueLoop = function(callback) {
 
 var startCluster = exports.startCluster = function() {
   var cluster = require('cluster');
-  var ncpus = os.cpus().length;
-  logger.info('Starting cluster with %d forks', ncpus);
   if (cluster.isMaster) {
+    var ncpus = os.cpus().length;
+    logger.info('Starting cluster with %d forks', ncpus);
     // set up listeners
     cluster.on('exit', function(worker, code, signal) {
-      console.log('cluster: worker exit', worker.id, worker.process.pid, code, signal);
+      logger.warn('cluster: worker exit', worker.id, worker.process.pid, code, signal);
+      cluster.fork();
     });
     cluster.on('fork', function(worker) {
-      console.log('cluster: worker fork', worker.id, worker.process.pid);
+      logger.info('cluster: worker fork', worker.id, worker.process.pid);
     });
 
     // fork workers

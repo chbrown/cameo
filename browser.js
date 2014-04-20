@@ -95,10 +95,11 @@ exports.requestAndInsertUrl = function(request_url, callback) {
     // persist even non-fatal failures
     db.Insert('pages')
     .set(page)
-    .execute(function(err, page) {
+    .execute(function(err, rows) {
       if (err) return callback(err);
+      var page = rows[0];
 
-      logger.info('added page to database');
+      logger.info('added page to database (content length = %d)', (page.response_body || '').length );
       callback(err);
     });
   });

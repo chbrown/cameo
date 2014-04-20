@@ -43,21 +43,21 @@ else {
 
   var command = argv._[0];
   if (command == 'install') {
-    logger.info('running "install"');
+    logger.debug('running "install"');
     commands.install(function(err) {
       if (err) logger.error(err);
       process.exit(err ? 1 : 0);
     });
   }
   else if (command == 'work') {
-    logger.info('running "work"');
+    logger.debug('running "work"');
     commands.work(function(err) {
       if (err) logger.error(err);
       process.exit(err ? 1 : 0);
     });
   }
   else if (command == 'add') {
-    logger.info('running "add"');
+    logger.debug('running "add"');
     commands.add(argv._.slice(1), function(err) {
       if (err) logger.error(err);
       process.exit(err ? 1 : 0);
