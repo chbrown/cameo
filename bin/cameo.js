@@ -2,7 +2,6 @@
 /*jslint node: true */
 var logger = require('loge');
 var os = require('os');
-var commands = require('./cameo-commands');
 
 var optimist = require('optimist')
   .usage([
@@ -15,7 +14,7 @@ var optimist = require('optimist')
     '',
   ].join('\n'))
   .describe({
-    forks: 'number of subprocess to fork for parallel tasks',
+    forks: 'number of subprocesses to fork for parallel tasks',
     help: 'print this help message',
     verbose: 'print extra output',
     version: 'print version',
