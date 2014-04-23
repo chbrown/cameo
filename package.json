@@ -1,8 +1,17 @@
 {
   "name": "cameo",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Small-scale webpage archiver",
-  "keywords": ["unscalable", "wayback", "archive", "postgres", "redis", "queue", "crawl", "web"],
+  "keywords": [
+    "unscalable",
+    "wayback",
+    "archive",
+    "postgres",
+    "redis",
+    "queue",
+    "crawl",
+    "web"
+  ],
   "homepage": "https://github.com/chbrown/cameo",
   "repository": {
     "type": "git",
