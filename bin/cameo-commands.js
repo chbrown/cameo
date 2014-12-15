@@ -2,6 +2,7 @@
 var _ = require('underscore');
 var async = require('async');
 var fs = require('fs');
+var path = require('path');
 var logger = require('loge');
 
 var db = require('../db');
@@ -9,10 +10,11 @@ var queue = require('../queue');
 
 exports.install = function() {
   /** Create the database if it doesn't exist and run schema.sql on it.
-  callback: function(Error | null)
   */
-  db.install(function(err) {
+  var sql_filepath = path.join(__dirname, '..', 'schema.sql');
+  db.initializeDatabase(sql_filepath, function(err) {
     if (err) throw err;
+    logger.debug('initialized database with %s', sql_filepath);
   });
 };
 
