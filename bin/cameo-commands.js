@@ -11,10 +11,19 @@ var queue = require('../queue');
 exports.install = function() {
   /** Create the database if it doesn't exist and run schema.sql on it.
   */
-  var sql_filepath = path.join(__dirname, '..', 'schema.sql');
-  db.initializeDatabase(sql_filepath, function(err) {
+  db.createDatabaseIfNotExists(function(err, exists) {
     if (err) throw err;
-    logger.debug('initialized database with %s', sql_filepath);
+
+    logger.debug('Database ready');
+
+    var patches_dirpath = path.join(__dirname, '..', 'database');
+
+    db.executePatches('_schema_patches', patches_dirpath, function(err) {
+      if (err) throw err;
+
+      logger.info('initialized database with migrations from %s/*.sql', patches_dirpath);
+      process.exit(0);
+    });
   });
 };
 

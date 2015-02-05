@@ -96,6 +96,7 @@ exports.requestAndInsertUrl = function(request_url, callback) {
     // persist even non-fatal failures
     db.Insert('pages')
     .set(page)
+    .returning('*')
     .execute(function(err, rows) {
       if (err) return callback(err);
       var page = rows[0];

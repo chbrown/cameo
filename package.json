@@ -26,12 +26,11 @@
   "dependencies": {
     "async": "*",
     "loge": "*",
-    "optimist": "*",
-    "pg": "*",
     "redis": "*",
-    "sqlcmd": "*",
+    "sqlcmd-pg": "~0.2.3",
     "streaming": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "yargs": "*"
   },
   "devDependencies": {
     "tap": "*"

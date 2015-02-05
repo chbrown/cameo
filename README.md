@@ -15,4 +15,4 @@ npm install -g cameo
 
 ## License
 
-Copyright © 2014 Christopher Brown. [MIT Licensed](LICENSE).
+Copyright 2014-2015 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).

@@ -3,7 +3,7 @@
 var logger = require('loge');
 var os = require('os');
 
-var optimist = require('optimist')
+var yargs = require('yargs')
   .usage([
     'Usage: cameo <command> [<args>]',
     '',
@@ -26,18 +26,18 @@ var optimist = require('optimist')
     // user: process.env.USER,
   });
 
-var argv = optimist.argv;
+var argv = yargs.argv;
 logger.level = argv.verbose ? 'debug' : 'info';
 
 if (argv.help) {
-  optimist.showHelp();
+  yargs.showHelp();
 }
 else if (argv.version) {
   console.log(require('../package').version);
 }
 else {
   var commands = require('./cameo-commands');
-  argv = optimist.check(function(argv) {
+  argv = yargs.check(function(argv) {
     if (argv._.length < 1) {
       throw new Error('You must specify a command');
     }
